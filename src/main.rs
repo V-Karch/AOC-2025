@@ -1,6 +1,7 @@
 use std::fs;
 
 mod day_1;
+mod day_2;
 
 fn file_to_lines(path: &str) -> Vec<String> {
     let content: String = fs::read_to_string(path).expect("Failed to read file");
@@ -10,6 +11,10 @@ fn file_to_lines(path: &str) -> Vec<String> {
 
 fn main() {
     let day_1_lines: Vec<String> = file_to_lines("inputs/day_1/input.txt");
+    let day_2_lines: Vec<String> = file_to_lines("inputs/day_2/input.txt");
+    println!("Day 1:");
     day_1::part_one(&day_1_lines);
     day_1::part_two(&day_1_lines);
+    println!("Day 2:");
+    day_2::part_one(&day_2_lines);
 }
