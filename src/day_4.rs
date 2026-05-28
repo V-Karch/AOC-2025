@@ -1,4 +1,4 @@
-pub fn part_one(lines: &Vec<String>) {
+fn count_removable_rolls(lines: &Vec<String>) -> i32 {
     let mut total = 0;
 
     for (line_index, line) in lines.iter().enumerate() {
@@ -40,5 +40,71 @@ pub fn part_one(lines: &Vec<String>) {
         }
     }
 
+    return total;
+}
+
+fn remove_removable_rolls(lines: &Vec<String>) -> Vec<String> {
+    let mut new_lines: Vec<Vec<char>> = lines.iter().map(|line| line.chars().collect()).collect();
+
+    for (line_index, line) in lines.iter().enumerate() {
+        for (char_index, char) in line.char_indices() {
+            if char == '@' {
+                let spots_to_check = [
+                    ((line_index as isize) - 1, (char_index as isize) - 1),
+                    ((line_index as isize), (char_index as isize) - 1),
+                    ((line_index as isize) + 1, (char_index as isize) - 1),
+                    ((line_index as isize) - 1, (char_index as isize)),
+                    ((line_index as isize) + 1, (char_index as isize)),
+                    ((line_index as isize) - 1, (char_index as isize) + 1),
+                    ((line_index as isize), (char_index as isize) + 1),
+                    ((line_index as isize) + 1, (char_index as isize) + 1),
+                ];
+
+                let mut adjacent_count = 0;
+
+                for (y, x) in spots_to_check {
+                    if y < 0
+                        || x < 0
+                        || y >= lines.len() as isize
+                        || x >= lines[y as usize].len() as isize
+                    {
+                        continue;
+                    }
+
+                    if lines[y as usize].chars().nth(x as usize) == Some('@') {
+                        adjacent_count += 1;
+                    }
+                }
+
+                if adjacent_count < 4 {
+                    new_lines[line_index][char_index] = '.';
+                }
+            }
+        }
+    }
+
+    return new_lines
+        .into_iter()
+        .map(|line| line.into_iter().collect())
+        .collect();
+}
+
+pub fn part_one(lines: &Vec<String>) {
+    let total = count_removable_rolls(lines);
     println!("Part 1: {}", total);
+}
+
+pub fn part_two(lines: &Vec<String>) {
+    let mut total = 0;
+    let mut current_removable = count_removable_rolls(lines);
+    let mut new_lines: Vec<String> = remove_removable_rolls(lines);
+    total += current_removable;
+
+    while current_removable > 0 {
+        current_removable = count_removable_rolls(&new_lines);
+        new_lines = remove_removable_rolls(&new_lines);
+        total += current_removable;
+    }
+
+    println!("Part 2: {}", total);
 }
