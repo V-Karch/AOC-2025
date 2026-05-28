@@ -24,3 +24,39 @@ pub fn part_one(lines: &Vec<String>) {
 
     println!("Part 1: {}", sum);
 }
+
+fn get_max_joltage_part_two(line: &String) -> u64 {
+    let digits: Vec<char> = line.chars().collect();
+    let k = 12;
+
+    let mut to_remove = digits.len() - k;
+    let mut stack: Vec<char> = Vec::with_capacity(k);
+
+    for &digit in &digits {
+        while to_remove > 0 && !stack.is_empty() && *stack.last().unwrap() < digit {
+            stack.pop();
+            to_remove -= 1;
+        }
+
+        stack.push(digit);
+    }
+
+    while to_remove > 0 {
+        stack.pop();
+        to_remove -= 1;
+    }
+
+    let result: String = stack.into_iter().take(k).collect();
+
+    return result.parse::<u64>().expect("Failed to parse result");
+}
+
+pub fn part_two(lines: &Vec<String>) {
+    let mut sum: u64 = 0;
+
+    for line in lines {
+        sum += get_max_joltage_part_two(line);
+    }
+
+    println!("Part 2: {}", sum);
+}

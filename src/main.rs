@@ -22,4 +22,5 @@ fn main() {
     day_2::part_two(&day_2_lines);
     println!("Day 3:");
     day_3::part_one(&day_3_lines);
+    day_3::part_two(&day_3_lines);
 }
