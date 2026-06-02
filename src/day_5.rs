@@ -49,3 +49,44 @@ pub fn part_one(lines: &Vec<String>) {
 
     println!("Part 1: {}", total_fresh);
 }
+
+pub fn part_two(lines: &Vec<String>) {
+    let split_index = lines
+        .iter()
+        .position(|s| s.is_empty())
+        .expect("Failed to find breakpoint");
+
+    let mut fresh_id_ranges: Vec<(u64, u64)> = lines[..split_index]
+        .iter()
+        .map(|s| {
+            let mut parts = s.split('-');
+
+            let start = parts.next().unwrap().parse::<u64>().unwrap();
+            let end = parts.next().unwrap().parse::<u64>().unwrap();
+
+            return (start, end);
+        })
+        .collect();
+
+    fresh_id_ranges.sort_unstable_by_key(|&(start, _)| start);
+
+    let mut merged: Vec<(u64, u64)> = Vec::new();
+    for (start, end) in fresh_id_ranges {
+        match merged.last_mut() {
+            Some((last_start, last_end)) if start <= *last_end + 1 => {
+                *last_end = (*last_end).max(end);
+            }
+            _ => {
+                merged.push((start, end));
+            }
+        }
+    }
+
+    let mut total: u64 = 0;
+
+    for pair in &merged {
+        total += (pair.1 + 1) - pair.0;
+    }
+
+    println!("Part 2: {}", total);
+}
